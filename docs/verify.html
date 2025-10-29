@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Verify the Mint — X Quantum Protocol (XQP)</title>
+  <style>
+    :root{--bg:#0b0f13;--panel:#131a22;--text:#e9f1ff;--muted:#9bb0c3;--brand:#4ad4a3;--danger:#ff6b6b;--ok:#4ad486;}
+    body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;margin:0;line-height:1.5;}
+    .wrap{max-width:940px;margin:0 auto;padding:40px 20px;}
+    h1{font-size:28px;margin:0 0 8px;}
+    .card{background:var(--panel);border-radius:16px;padding:18px 20px;box-shadow:0 4px 24px rgba(0,0,0,.25);margin:16px 0;}
+    label{display:block;margin:10px 0 4px;color:var(--muted);}
+    input,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid #243141;background:#0d131a;color:var(--text);}
+    .row{display:flex;gap:12px;flex-wrap:wrap;}
+    button{padding:12px 16px;border-radius:12px;background:var(--brand);border:none;color:#07170f;font-weight:700;cursor:pointer;}
+    .muted{color:var(--muted);}
+    .status{margin-top:12px;font-weight:700;}
+    .ok{color:var(--ok);} .bad{color:var(--danger);}
+    a{color:var(--brand);}
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tweetnacl/1.0.3/nacl.min.js" integrity="sha512-8WRPrV5ZjEIJy6J0Bs8W9m0ZfF+KQxMo8RYW8nqGQbS1yZd+oR1Y8yPRgN0j2O6U3xjKmuJ7QnVZlSE0QbnLEA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bs58@5.0.0/dist/bs58.min.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Verify the Official Mint</h1>
+    <p class="muted">Use this page to verify that a base58 signature was produced by the official signing address over the standard XQP message. Anyone can reproduce this check in the browser.</p>
+
+    <div class="card">
+      <h2>Standard message</h2>
+      <p class="muted">This is what we sign to prove authenticity:</p>
+      <textarea id="msg" rows="5">X Quantum Protocol (XQP) — Official Mint Assertion
+Mint: 5qrGE6aj5yYnhP7tJwNSP8Uz48juymCTMQT7w7w1KtH6
+Date: YYYY-MM-DD
+Nonce: optional-random-string</textarea>
+      <div class="row">
+        <div style="flex:1">
+          <label>Signing address (base58)</label>
+          <input id="pub" value="7UBAQdQAdVC3MzDb9SQtfzzrjcCFgutxk8F45NSWKai1"/>
+        </div>
+        <div style="flex:1">
+          <label>Signature (base58)</label>
+          <input id="sig" placeholder="Paste signature from SIGNED_MESSAGE.md"/>
+        </div>
+      </div>
+      <button onclick="verify()">Verify Signature</button>
+      <div id="out" class="status muted"></div>
+      <p class="muted" style="margin-top:12px">Signed message file: <a href="https://github.com/pnholt/xqp-quantum-protocol/blob/main/SIGNED_MESSAGE.md" target="_blank" rel="noopener">SIGNED_MESSAGE.md</a></p>
+    </div>
+
+    <div class="card">
+      <h2>Why this matters</h2>
+      <p>Impostors can copy names and logos, but they can’t produce a valid signature from our known public key over this message. Verifying the signature proves the mint string and message were endorsed by us.</p>
+    </div>
+
+    <p><a href="./index.html">← Back to homepage</a></p>
+  </div>
+
+  <script>
+    function toBytesUtf8(str){return new TextEncoder().encode(str)}
+    function verify(){
+      const pub = document.getElementById('pub').value.trim();
+      const sigB58 = document.getElementById('sig').value.trim();
+      const msg = document.getElementById('msg').value;
+      const out = document.getElementById('out');
+      try{
+        const pubBytes = bs58.default.decode(pub);
+        const sigBytes = bs58.default.decode(sigB58);
+        const msgBytes = toBytesUtf8(msg);
+        const ok = nacl.sign.detached.verify(msgBytes, sigBytes, pubBytes);
+        out.textContent = ok ? '✔ Signature is VALID for this message and address.' : '✖ Signature INVALID for this message/address.';
+        out.className = 'status ' + (ok ? 'ok' : 'bad');
+      }catch(e){
+        out.textContent = 'Error: ' + e.message;
+        out.className = 'status bad';
+      }
+    }
+  </script>
+</body>
+</html>
