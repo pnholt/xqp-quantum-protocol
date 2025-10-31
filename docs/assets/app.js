@@ -1,1 +1,0 @@
-function filterRecipients(){const q=(document.getElementById('search').value||'').toLowerCase();document.querySelectorAll('.rec-card').forEach(c=>{const t=c.getAttribute('data-text');c.style.display=t.includes(q)?'':'';});}function printLetter(){window.print();}
