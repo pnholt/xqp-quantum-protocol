@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>XQP — OTC & Community Liquidity</title>
+  <style>
+    :root{--bg:#0b0f13;--panel:#131a22;--text:#e9f1ff;--muted:#9bb0c3;--brand:#4ad4a3;}
+    body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;margin:0;line-height:1.5;}
+    .wrap{max-width:940px;margin:0 auto;padding:40px 20px;}
+    h1{font-size:28px;margin:0 0 8px;}
+    .card{background:var(--panel);border-radius:16px;padding:18px 20px;box-shadow:0 4px 24px rgba(0,0,0,.25);margin:16px 0;}
+    .row{display:flex;gap:12px;flex-wrap:wrap;}
+    .muted{color:var(--muted);}
+    a.btn,button{display:inline-block;padding:12px 16px;border-radius:12px;background:var(--brand);color:#07170f;text-decoration:none;font-weight:700;border:none;cursor:pointer;}
+    input{width:100%;padding:10px;border-radius:10px;border:1px solid #243141;background:#0d131a;color:var(--text);}
+    code{background:#0d131a;padding:2px 6px;border-radius:6px;}
+    ul{margin:8px 0 0 20px;}
+    footer{margin-top:32px;color:var(--muted);font-size:12px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>OTC & Community Liquidity — X Quantum Protocol (XQP)</h1>
+    <p class="muted">Official mint: <code>5qrGE6aj5yYnhP7tJwNSP8Uz48juymCTMQT7w7w1KtH6</code></p>
+
+    <div class="card">
+      <h2>1) Micro‑Presale (OTC)</h2>
+      <p>Supporters can send SOL and receive XQP directly at a posted rate. A portion of received SOL will seed the on‑chain XQP/USDC (or XQP/SOL) pool so trading becomes easy for everyone.</p>
+      <ul>
+        <li><strong>Receiving address (SOL):</strong> <code>7UBAQdQAdVC3MzDb9SQtfzzrjcCFgutxk8F45NSWKai1</code></li>
+        <li><strong>Posted rate:</strong> <code id="rateDisplay">set by founder (example below)</code></li>
+        <li><strong>Cap:</strong> small, first‑come‑first‑served (e.g., 1–2 SOL)</li>
+        <li>Delivery: XQP is sent immediately after each SOL receipt.</li>
+      </ul>
+      <div class="row">
+        <div style="flex:1">
+          <label>Example rate (XQP per 1 SOL)</label>
+          <input id="rate" value="10000000" oninput="calc()"/>
+        </div>
+        <div style="flex:1">
+          <label>Your SOL</label>
+          <input id="sol" value="0.5" oninput="calc()"/>
+        </div>
+      </div>
+      <p>Estimated XQP received: <strong id="out">5,000,000</strong></p>
+      <p class="muted">Ledger template: <a href="https://raw.githubusercontent.com/pnholt/xqp-quantum-protocol/main/docs/otc_ledger_template.csv" target="_blank" rel="noopener">download CSV</a>. We publicly log sender, amount, delivery tx links.</p>
+    </div>
+
+    <div class="card">
+      <h2>2) Community LP (You Earn Fees)</h2>
+      <p>Contributors provide SOL/USDC while the project provides XQP; liquidity is added on an AMM (Raydium/Orca). LP tokens are returned to contributors so <em>they</em> earn swap fees. Optionally, use a multisig to hold the LP position.</p>
+      <ul>
+        <li>Target: small initial depth (e.g., 1–3 SOL equivalent).</li>
+        <li>Assets: SOL or USDC (preferred for pricing & off‑ramp).</li>
+        <li>Proof: all adds/returns published with tx links.</li>
+      </ul>
+      <p class="muted">LP ledger template: <a href="https://raw.githubusercontent.com/pnholt/xqp-quantum-protocol/main/docs/lp_ledger_template.csv" target="_blank" rel="noopener">download CSV</a></p>
+    </div>
+
+    <div class="card">
+      <h2>3) Optional: LP Mining (Incentives)</h2>
+      <p>We may distribute a small weekly XQP reward to wallets that add and hold LP, proportional to their share. Snapshot/claim rules will be posted in advance.</p>
+    </div>
+
+    <footer>© X Quantum Protocol. Keep records of all contributions and deliveries. DYOR.</footer>
+  </div>
+  <script>
+    function calc(){
+      const r = parseFloat(document.getElementById('rate').value)||0;
+      const s = parseFloat(document.getElementById('sol').value)||0;
+      document.getElementById('out').textContent = (r*s).toLocaleString();
+      document.getElementById('rateDisplay').textContent = r.toLocaleString() + ' XQP / 1 SOL';
+    }
+    calc();
+  </script>
+</body></html>
