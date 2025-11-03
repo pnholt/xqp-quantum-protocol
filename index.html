@@ -3,6 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <title>XQP Genesis Gifts</title>
+<meta name="title" content="X Quantum Protocol (XQP) – Make XQP Great Again" />
+<meta name="description" content="Turn quantum narrative into onchain momentum. No promises, just action." />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="X Quantum Protocol (XQP) – Make XQP Great Again" />
+<meta property="og:description" content="Turn quantum narrative into onchain momentum. No promises, just action." />
+<meta property="og:image" content="/xqp-quantum-protocol/assets/og-card.png" />
+<meta property="og:url" content="https://pnholt.github.io/xqp-quantum-protocol/" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="X Quantum Protocol (XQP) – Make XQP Great Again" />
+<meta name="twitter:description" content="Turn quantum narrative into onchain momentum. No promises, just action." />
+<meta name="twitter:image" content="/xqp-quantum-protocol/assets/og-card.png" />
 <style>
   body { font-family: Arial, sans-serif; background-color: #0a0a0a; color: #f5f5f5; margin: 0; padding: 0; }
   .gold { color: #DAA520; }
@@ -50,5 +61,31 @@
   </ul>
   <p>If you have any questions, please contact the XQP team.</p>
 </div>
+<div class="container">
+  <h2>Live Momentum</h2>
+  <div id="xqp-public-metrics">
+    <div>Visitors today: <span id="m-visitors">—</span></div>
+    <div>CTA clicks: <span id="m-cta">—</span></div>
+    <div>Wallet connects: <span id="m-connect">—</span></div>
+    <div>Tx submitted: <span id="m-txsub">—</span></div>
+    <div>Tx confirmed: <span id="m-txok">—</span></div>
+    <div>Community joins: <span id="m-join">—</span></div>
+  </div>
+</div>
+<script>
+(async function(){
+  try {
+    const res = await fetch('/xqp-quantum-protocol/metrics.json', { cache: 'no-store' });
+    const m = await res.json();
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = (v ?? '—'); };
+    set('m-visitors', m.visitors_today);
+    set('m-cta', m.click_cta);
+    set('m-connect', m.start_wallet_connect);
+    set('m-txsub', m.tx_submitted);
+    set('m-txok', m.tx_confirmed);
+    set('m-join', m.join_community);
+  } catch(e) {}
+})();
+</script>
 </body>
 </html>

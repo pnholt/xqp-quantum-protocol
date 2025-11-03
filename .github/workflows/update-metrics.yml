@@ -1,0 +1,40 @@
+name: Update Public Metrics
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install deps
+        run: |
+          npm init -y >/dev/null 2>&1 || true
+          npm i googleapis@131.0.0 --save-dev
+
+      - name: Generate metrics.json
+        env:
+          GA4_PROPERTY_ID: ${{ secrets.GA4_PROPERTY_ID }}
+          GA4_CLIENT_EMAIL: ${{ secrets.GA4_CLIENT_EMAIL }}
+          GA4_PRIVATE_KEY: ${{ secrets.GA4_PRIVATE_KEY }}
+        run: |
+          node .github/workflows/scripts/update_metrics.js || echo '{"visitors_today":0,"click_cta":0,"start_wallet_connect":0,"tx_submitted":0,"tx_confirmed":0,"join_community":0}' > metrics.json
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add metrics.json || true
+          git commit -m "chore: update public metrics" || echo "No changes"
+          git push
+
