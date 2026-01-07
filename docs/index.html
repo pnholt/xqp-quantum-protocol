@@ -1,2 +1,84 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>XQP – X Quantum Protocol</title><style>:root{--bg:#0b0f13;--panel:#131a22;--text:#e9f1ff;--muted:#9bb0c3;--brand:#4ad4a3}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif}main{max-width:920px;margin:0 auto;padding:40px 18px}.grid{display:grid;gap:14px}@media(min-width:720px){.grid{grid-template-columns:repeat(2,1fr)}}.card{background:var(--panel);border-radius:16px;padding:18px 18px 20px;box-shadow:0 4px 24px rgba(0,0,0,.25)}h1{margin:0 0 6px;font-size:28px}.muted{color:var(--muted)}code{background:#0d131a;padding:2px 6px;border-radius:6px}a.btn{display:inline-block;margin-top:6px;padding:10px 14px;border-radius:12px;background:var(--brand);color:#052c1f;text-decoration:none;font-weight:700}</style></head><body><main><h1>X Quantum Protocol (XQP)</h1><p class="muted">Official mint: <code>5qrGE6aj5yYnhP7tJwNSP8Uz48juymCTMQT7w7w1KtH6</code></p><div class="grid"><div class="card"><h2>Buy XQP</h2><p>Swap SOL/USDC ↔ XQP with Jupiter.</p><a class="btn" href="./buy.html">Open Buy Page</a></div><div class="card"><h2>Verify the Mint</h2><p>Copy‑paste tools and explorer links.</p><a class="btn" href="./verify.html">Verify</a></div><div class="card"><h2>Official Info</h2><p>Decimals, supply, pledge, links.</p><a class="btn" href="./official.html">Official</a></div><div class="card"><h2>OTC & Community LP</h2><p>Support with SOL, receive XQP, or help provide liquidity.</p><a class="btn" href="./otc.html">OTC & LP</a></div></div></main></body></html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>XQP Coin – Quantum Gold‑Backed Ecosystem</title>
+  <style>
+    :root {
+      --bg:#0b0f13; --panel:#131a22; --text:#e9f1ff; --muted:#9bb0c3; --brand:#d4af37;
+    }
+    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui}
+    main{max-width:1000px;margin:auto;padding:40px 20px}
+    .card{background:var(--panel);border-radius:16px;padding:24px;margin-bottom:24px}
+    h1,h2{color:var(--brand)}
+    .tier{border:1px solid var(--brand);border-radius:12px;padding:16px;margin:12px 0}
+    button{background:var(--brand);border:none;padding:12px 18px;border-radius:10px;font-weight:700;cursor:pointer}
+    footer{padding:30px;text-align:center;color:var(--muted)}
+  </style>
+</head>
+<body>
+<main>
+  <h1>XQP Coin</h1>
+  <p class="muted">A gold‑backed digital asset within the Quantum Ecosystem.</p>
+
+  <div class="card">
+    <h2>Contribution Tiers</h2>
+
+    <div class="tier">
+      <h3>Genesis</h3>
+      <p>£25–£75</p>
+      <button onclick="buy('Genesis')">Request Allocation</button>
+    </div>
+
+    <div class="tier">
+      <h3>Pioneer</h3>
+      <p>£100–£500</p>
+      <button onclick="buy('Pioneer')">Request Allocation</button>
+    </div>
+
+    <div class="tier">
+      <h3>Founder</h3>
+      <p>£1,000–£5,000</p>
+      <button onclick="buy('Founder')">Request Allocation</button>
+    </div>
+
+    <div class="tier">
+      <h3>Architect</h3>
+      <p>£10,000+</p>
+      <button onclick="buy('Architect')">Request Allocation</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>How Payment Works</h2>
+    <p>
+      Payments are handled via crypto‑friendly providers or UK bank transfer.
+      After requesting an allocation, you will receive instructions.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Legal Notice</h2>
+    <p class="muted">
+      XQP is not a regulated financial instrument. No guarantees are made.
+      Only participate if you understand the risks.
+    </p>
+  </div>
+</main>
+
+<footer>
+  © 2026 XQP Quantum Protocol • Built in Manchester
+</footer>
+
+<script>
+function buy(tier){
+  const subject = encodeURIComponent("XQP Allocation Request – " + tier);
+  const body = encodeURIComponent(
+    "Hello,\n\nI would like to request an allocation in the " + tier + " tier for XQP.\n\nPlease send payment instructions.\n\nThank you."
+  );
+  window.location.href = "mailto:allocations@xqpcoin.com?subject=" + subject + "&body=" + body;
+}
+</script>
+</body>
+</html>
