@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Conversation Converter – Clawd-Ready Export</title>
+  <style>
+    :root {
+      --bg:#0b0f13; --panel:#141c26; --text:#e9f1ff; --muted:#9bb0c3; --brand:#d4af37; --border:#233143;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui;line-height:1.5}
+    main{max-width:1100px;margin:auto;padding:40px 20px}
+    h1,h2{color:var(--brand)}
+    .panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px}
+    .grid{display:grid;grid-template-columns:1fr;gap:16px}
+    @media (min-width:900px){.grid{grid-template-columns:1.1fr 0.9fr}}
+    .drop{
+      border:2px dashed var(--brand);
+      border-radius:14px;
+      padding:28px;
+      text-align:center;
+      background:rgba(212,175,55,0.05);
+      transition:background 0.2s ease;
+    }
+    .drop.dragover{background:rgba(212,175,55,0.15)}
+    input[type="file"]{margin-top:16px}
+    button{
+      background:var(--brand);
+      border:none;
+      padding:12px 18px;
+      border-radius:10px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    button.secondary{background:transparent;color:var(--brand);border:1px solid var(--brand)}
+    .row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+    .muted{color:var(--muted)}
+    textarea{width:100%;min-height:320px;background:#0f141b;color:var(--text);border:1px solid var(--border);border-radius:12px;padding:14px;font-family:ui-monospace, SFMono-Regular, Menlo, monospace}
+    label{display:flex;gap:8px;align-items:center}
+    footer{padding:30px;text-align:center;color:var(--muted)}
+  </style>
+</head>
+<body>
+<main>
+  <h1>Conversation Converter</h1>
+  <p class="muted">Turn a <strong>conversations.json</strong> file into a clean, readable export that can be fed into Clawd. Everything runs locally in your browser.</p>
+
+  <div class="panel grid">
+    <section>
+      <h2>1) Upload your file</h2>
+      <div class="drop" id="dropZone">
+        <p>Drag & drop your <strong>conversations.json</strong> here</p>
+        <p class="muted">or choose a file from your device</p>
+        <input type="file" id="fileInput" accept="application/json">
+      </div>
+      <div class="row" style="margin-top:16px">
+        <label><input type="checkbox" id="includeMeta" checked> Include metadata (timestamps + titles)</label>
+        <label><input type="checkbox" id="includeEmpty"> Keep empty messages</label>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <label for="format">Output format</label>
+        <select id="format">
+          <option value="markdown" selected>Markdown (.md)</option>
+          <option value="text">Plain text (.txt)</option>
+        </select>
+      </div>
+      <div class="row" style="margin-top:16px">
+        <button id="copyBtn" disabled>Copy Output</button>
+        <button id="downloadBtn" class="secondary" disabled>Download File</button>
+      </div>
+      <p class="muted" id="status" style="margin-top:12px"></p>
+    </section>
+
+    <section>
+      <h2>2) Preview</h2>
+      <textarea id="output" readonly placeholder="Your converted file will appear here..."></textarea>
+    </section>
+  </div>
+
+  <div class="panel">
+    <h2>What this tool does</h2>
+    <ul>
+      <li>Extracts every conversation, ordered by time or chat tree.</li>
+      <li>Normalizes roles (user, assistant, system) for Clawd-friendly training.</li>
+      <li>Exports a readable Markdown or plain text file without nested JSON.</li>
+    </ul>
+    <p class="muted">Your data never leaves your device — no uploads, no servers.</p>
+  </div>
+</main>
+
+<footer>
+  © 2026 XQP Quantum Protocol • Conversation Converter
+</footer>
+
+<script>
+  const fileInput = document.getElementById('fileInput');
+  const dropZone = document.getElementById('dropZone');
+  const output = document.getElementById('output');
+  const copyBtn = document.getElementById('copyBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const statusEl = document.getElementById('status');
+  const includeMeta = document.getElementById('includeMeta');
+  const includeEmpty = document.getElementById('includeEmpty');
+  const formatSelect = document.getElementById('format');
+
+  const formatTimestamp = (value) => {
+    if (!value) return '';
+    const numeric = Number(value);
+    if (Number.isFinite(numeric)) {
+      return new Date(numeric * 1000).toISOString();
+    }
+    return String(value);
+  };
+
+  const extractContent = (content) => {
+    if (!content) return '';
+    if (typeof content === 'string') return content;
+    if (Array.isArray(content)) return content.join('\n');
+    if (Array.isArray(content.parts)) return content.parts.join('\n');
+    if (typeof content.text === 'string') return content.text;
+    if (typeof content.result === 'string') return content.result;
+    if (typeof content.output === 'string') return content.output;
+    return JSON.stringify(content, null, 2);
+  };
+
+  const deriveMessagesFromMapping = (mapping, currentNode) => {
+    if (currentNode && mapping[currentNode]) {
+      const chain = [];
+      let nodeId = currentNode;
+      while (nodeId && mapping[nodeId]) {
+        const node = mapping[nodeId];
+        if (node.message) chain.push(node.message);
+        nodeId = node.parent;
+      }
+      return chain.reverse();
+    }
+    return Object.values(mapping)
+      .map((node) => node.message)
+      .filter(Boolean)
+      .sort((a, b) => (a.create_time || 0) - (b.create_time || 0));
+  };
+
+  const normalizeConversations = (raw) => {
+    if (Array.isArray(raw)) return raw;
+    if (raw && Array.isArray(raw.conversations)) return raw.conversations;
+    if (raw && Array.isArray(raw.items)) return raw.items;
+    return [];
+  };
+
+  const buildExport = (conversations, format) => {
+    const lines = [];
+    const push = (value = '') => lines.push(value);
+
+    if (format === 'markdown') {
+      push('# Conversations Export');
+      push('');
+    } else {
+      push('CONVERSATIONS EXPORT');
+      push('');
+    }
+
+    conversations.forEach((conv, index) => {
+      const title = conv.title || conv.conversation_title || `Conversation ${index + 1}`;
+      const createdAt = formatTimestamp(conv.create_time || conv.created_at);
+      if (format === 'markdown') {
+        push(`## Conversation: ${title}`);
+      } else {
+        push(`Conversation: ${title}`);
+      }
+      if (includeMeta.checked && createdAt) {
+        push(format === 'markdown' ? `- Created: ${createdAt}` : `Created: ${createdAt}`);
+      }
+      push('');
+
+      let messages = [];
+      if (conv.mapping) {
+        messages = deriveMessagesFromMapping(conv.mapping, conv.current_node);
+      } else if (Array.isArray(conv.messages)) {
+        messages = conv.messages;
+      }
+
+      messages.forEach((msg) => {
+        const role = msg.author?.role || msg.role || 'unknown';
+        const timestamp = includeMeta.checked ? formatTimestamp(msg.create_time) : '';
+        const content = extractContent(msg.content || msg.message || msg.text || msg.data);
+        if (!content && !includeEmpty.checked) return;
+        if (format === 'markdown') {
+          push(`### ${role}${timestamp ? ` (${timestamp})` : ''}`);
+          push(content || '[empty]');
+          push('');
+        } else {
+          push(`${role.toUpperCase()}${timestamp ? ` (${timestamp})` : ''}`);
+          push(content || '[empty]');
+          push('');
+        }
+      });
+
+      if (index < conversations.length - 1) {
+        push(format === 'markdown' ? '---' : '-----------------------------');
+        push('');
+      }
+    });
+
+    return lines.join('\n');
+  };
+
+  const storeRaw = (raw) => {
+    output.dataset.raw = JSON.stringify(raw);
+  };
+
+  const updateOutput = (raw) => {
+    storeRaw(raw);
+    const conversations = normalizeConversations(raw);
+    if (!conversations.length) {
+      output.value = '';
+      statusEl.textContent = 'No conversations found. Check the file structure.';
+      copyBtn.disabled = true;
+      downloadBtn.disabled = true;
+      return;
+    }
+    const formatted = buildExport(conversations, formatSelect.value);
+    output.value = formatted;
+    statusEl.textContent = `Loaded ${conversations.length} conversation${conversations.length === 1 ? '' : 's'}.`;
+    copyBtn.disabled = false;
+    downloadBtn.disabled = false;
+  };
+
+  const handleFile = (file) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        updateOutput(data);
+      } catch (error) {
+        statusEl.textContent = 'Invalid JSON file. Please check the file and try again.';
+        output.value = '';
+        copyBtn.disabled = true;
+        downloadBtn.disabled = true;
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  fileInput.addEventListener('change', (event) => {
+    handleFile(event.target.files[0]);
+  });
+
+  dropZone.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+
+  dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('dragover');
+  });
+
+  dropZone.addEventListener('drop', (event) => {
+    event.preventDefault();
+    dropZone.classList.remove('dragover');
+    handleFile(event.dataTransfer.files[0]);
+  });
+
+  includeMeta.addEventListener('change', () => {
+    if (output.value) {
+      try {
+        updateOutput(JSON.parse(output.dataset.raw));
+      } catch (_) {
+        return;
+      }
+    }
+  });
+
+  includeEmpty.addEventListener('change', () => {
+    if (output.value) {
+      try {
+        updateOutput(JSON.parse(output.dataset.raw));
+      } catch (_) {
+        return;
+      }
+    }
+  });
+
+  formatSelect.addEventListener('change', () => {
+    if (output.value) {
+      try {
+        updateOutput(JSON.parse(output.dataset.raw));
+      } catch (_) {
+        return;
+      }
+    }
+  });
+
+  copyBtn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(output.value);
+      statusEl.textContent = 'Copied output to clipboard.';
+    } catch (error) {
+      statusEl.textContent = 'Copy failed. Please select the text manually.';
+    }
+  });
+
+  downloadBtn.addEventListener('click', () => {
+    const blob = new Blob([output.value], { type: 'text/plain' });
+    const link = document.createElement('a');
+    const extension = formatSelect.value === 'markdown' ? 'md' : 'txt';
+    link.href = URL.createObjectURL(blob);
+    link.download = `clawd-conversations.${extension}`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(link.href);
+  });
+</script>
+</body>
+</html>
