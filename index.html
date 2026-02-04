@@ -1,54 +1,373 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>XQP Genesis Gifts</title>
-<style>
-  body { font-family: Arial, sans-serif; background-color: #0a0a0a; color: #f5f5f5; margin: 0; padding: 0; }
-  .gold { color: #DAA520; }
-  .header { background-color: #000; padding: 20px; text-align: center; }
-  .header .seal { display: flex; align-items: center; justify-content: center; flex-direction: column; }
-  .header .seal .x { font-size: 36px; font-weight: bold; color: #DAA520; }
-  .header .seal .proto { font-size: 20px; color: #DAA520; letter-spacing: 2px; margin-top: -10px; }
-  .header .badge { font-size: 12px; color: #f5f5f5; border: 1px solid #DAA520; display: inline-block; padding: 5px 10px; margin-top: 10px; }
-  .container { max-width: 800px; margin: 40px auto; padding: 20px; border: 1px solid #DAA520; background-color: #111; }
-  h1 { color: #DAA520; }
-  ul { list-style: none; padding: 0; }
-  li { margin: 10px 0; }
-  a { color: #DAA520; text-decoration: none; }
-  a:hover { text-decoration: underline; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DWP Customer Management System</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --text: #1b2636;
+      --muted: #54647a;
+      --brand: #1d4ed8;
+      --accent: #0ea5e9;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --border: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    header {
+      background: linear-gradient(120deg, #0f172a, #1e3a8a);
+      color: #fff;
+      padding: 40px 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      align-items: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 3vw, 3rem);
+      margin: 0 0 12px;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: #dce4f2;
+      line-height: 1.6;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 12px 18px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    main {
+      padding: 32px 0 60px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.06);
+    }
+
+    .card h3 {
+      margin-top: 0;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: var(--brand);
+      font-weight: 600;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+      margin: 36px 0 16px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 1.6rem;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--panel);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    th {
+      background: #f8fafc;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 0.75rem;
+    }
+
+    .status {
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status.success { color: var(--success); }
+    .status.warning { color: var(--warning); }
+    .status.info { color: var(--accent); }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .timeline-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--brand);
+      margin-top: 6px;
+    }
+
+    .footer {
+      padding: 28px 0;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero-actions { flex-direction: column; align-items: stretch; }
+    }
+  </style>
 </head>
 <body>
-<div class="header">
-  <div class="seal">
-    <div class="x">X</div>
-    <div class="proto">X QUANTUM PROTOCOL</div>
+<header>
+  <div class="container hero">
+    <div>
+      <span class="pill">Department for Work & Pensions</span>
+      <h1>Customer Management System</h1>
+      <p>
+        A unified, service-led platform for managing benefits, casework, and citizen
+        support journeys. Designed for speed, compliance, and compassionate service.
+      </p>
+      <div class="hero-actions">
+        <button class="btn btn-primary">Launch Operator Console</button>
+        <button class="btn btn-secondary">View Service Insights</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Live Service Health</h3>
+      <p class="muted">Updated 2 minutes ago</p>
+      <div class="grid">
+        <div>
+          <div class="pill">99.97% uptime</div>
+          <p class="muted">Digital applications</p>
+        </div>
+        <div>
+          <div class="pill">2,430 active cases</div>
+          <p class="muted">Across 12 regional hubs</p>
+        </div>
+        <div>
+          <div class="pill">+18% faster</div>
+          <p class="muted">Average triage time</p>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="badge">TOP SECRET / XQP EYES ONLY</div>
-</div>
-<div class="container">
-  <h1>Genesis Gifts Recipients</h1>
-  <p>Select your name below to view your XQP grant letter:</p>
-  <ul>
-    <li><a href="gifts/alan-atkiss.html">Alan Atkiss – 10,000,000 XQP</a></li>
-    <li><a href="gifts/amelia-rodgers.html">Amelia Rodgers – 10,000,000 XQP</a></li>
-    <li><a href="gifts/angela-pollit.html">Angela Pollit – 10,000,000 XQP</a></li>
-    <li><a href="gifts/archie-rodgers.html">Archie Rodgers – 10,000,000 XQP</a></li>
-    <li><a href="gifts/daniel-healy.html">Daniel Healy – 10,000,000 XQP</a></li>
-    <li><a href="gifts/danielle-horan.html">Danielle Horan – 10,000,000 XQP</a></li>
-    <li><a href="gifts/della-ann.html">Della-Ann – 10,000,000 XQP</a></li>
-    <li><a href="gifts/gary-eastwood.html">Gary Eastwood – 10,000,000 XQP</a></li>
-    <li><a href="gifts/gary-lewis.html">Gary Lewis – 10,000,000 XQP</a></li>
-    <li><a href="gifts/hannah-frost.html">Hannah Frost – 10,000,000 XQP</a></li>
-    <li><a href="gifts/lisa-holden.html">Lisa Holden – 10,000,000 XQP</a></li>
-    <li><a href="gifts/roz-hayes.html">Roz Hayes – 10,000,000 XQP</a></li>
-    <li><a href="gifts/stephen-millington.html">Stephen Millington – 10,000,000 XQP</a></li>
-    <li><a href="gifts/tony-mcmahon.html">Tony McMahon – 10,000,000 XQP</a></li>
-    <li><a href="gifts/vincent-gatter.html">Vincent Gatter – 10,000,000 XQP</a></li>
-    <li><a href="gifts/wayne-smirk.html">Wayne Smirk – 10,000,000 XQP</a></li>
-  </ul>
-  <p>If you have any questions, please contact the XQP team.</p>
-</div>
+</header>
+
+<main>
+  <div class="container">
+    <section>
+      <div class="section-title">
+        <h2>Citizen 360° View</h2>
+        <span class="muted">Consolidated profile, eligibility, and correspondence</span>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>Priority Alerts</h3>
+          <p class="muted">Safeguarding and vulnerability flags surfaced automatically.</p>
+          <p class="status warning">Urgent: Housing support review due</p>
+        </div>
+        <div class="card">
+          <h3>Eligibility Timeline</h3>
+          <div class="timeline">
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <div>
+                <strong>Universal Credit</strong>
+                <div class="muted">Verified income and household data</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <div>
+                <strong>Disability Support</strong>
+                <div class="muted">Assessment booked for 14 Oct</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <div>
+                <strong>Carer Allowance</strong>
+                <div class="muted">Awaiting partner verification</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Engagement Insights</h3>
+          <p class="muted">Preferred channels and service history.</p>
+          <ul class="muted">
+            <li>98% digital comms adoption</li>
+            <li>Last contact: secure message, 3 days ago</li>
+            <li>Next scheduled callback: Friday 10:00</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2>Casework Command Centre</h2>
+        <span class="muted">Prioritised queues with AI-assisted recommendations</span>
+      </div>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Case ID</th>
+              <th>Citizen</th>
+              <th>Service Line</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Next Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>CMS-20491</td>
+              <td>Olivia Grant</td>
+              <td>Universal Credit</td>
+              <td>High</td>
+              <td><span class="status warning">Escalated</span></td>
+              <td>Complete safeguarding check</td>
+            </tr>
+            <tr>
+              <td>CMS-20477</td>
+              <td>Harvey Singh</td>
+              <td>Jobseeker Support</td>
+              <td>Medium</td>
+              <td><span class="status info">In Review</span></td>
+              <td>Confirm training plan</td>
+            </tr>
+            <tr>
+              <td>CMS-20452</td>
+              <td>Amelia Jones</td>
+              <td>Pension Credit</td>
+              <td>Low</td>
+              <td><span class="status success">Approved</span></td>
+              <td>Send award summary</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2>Operational Excellence</h2>
+        <span class="muted">Built for compliance, accessibility, and measurable outcomes</span>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>Secure-by-Design</h3>
+          <p class="muted">Role-based access, audit trails, and real-time risk scoring.</p>
+          <p class="status success">ISO 27001 aligned</p>
+        </div>
+        <div class="card">
+          <h3>Inclusive Service</h3>
+          <p class="muted">WCAG 2.2 AA compliant with assisted digital options.</p>
+          <p class="status info">120 languages supported</p>
+        </div>
+        <div class="card">
+          <h3>Outcome Analytics</h3>
+          <p class="muted">Track service performance, equality metrics, and citizen satisfaction.</p>
+          <p class="status success">+24% satisfaction uplift</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  Delivering dependable, human-centred services for the Department for Work & Pensions.
+</footer>
 </body>
 </html>
