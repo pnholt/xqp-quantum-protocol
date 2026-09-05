@@ -1,0 +1,36 @@
+name: XQP CI
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'reference/**'
+      - 'schemas/**'
+      - 'scripts/**'
+      - 'package.json'
+      - '.github/workflows/xqp-ci.yml'
+  pull_request:
+    paths:
+      - 'reference/**'
+      - 'schemas/**'
+      - 'scripts/**'
+      - 'package.json'
+      - '.github/workflows/xqp-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  reference-tests:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - name: Runner probe
+        run: |
+          echo "runner=$RUNNER_NAME"
+          uname -a
+          node --version
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run dependency-free reference tests
+        run: node --test reference/xqp_transaction.test.js reference/solana_devnet_adapter.test.js
