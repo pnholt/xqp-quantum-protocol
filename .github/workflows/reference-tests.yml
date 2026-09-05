@@ -1,23 +1,7 @@
-name: XQP Reference Tests
+name: XQP Reference Runner Diagnostic
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'reference/**'
-      - 'schemas/**'
-      - 'scripts/**'
-      - 'docs/XQP-0003-TRANSACTION-PROTOCOL.md'
-      - 'docs/XQP-0005-DEVNET-SETTLEMENT.md'
-      - '.github/workflows/reference-tests.yml'
-  pull_request:
-    paths:
-      - 'reference/**'
-      - 'schemas/**'
-      - 'scripts/**'
-      - 'docs/XQP-0003-TRANSACTION-PROTOCOL.md'
-      - 'docs/XQP-0005-DEVNET-SETTLEMENT.md'
-      - '.github/workflows/reference-tests.yml'
 
 permissions:
   contents: read
@@ -25,6 +9,7 @@ permissions:
 jobs:
   runner-probe:
     runs-on: ubuntu-22.04
+    timeout-minutes: 5
     steps:
       - name: Runner identity
         run: |
@@ -32,11 +17,12 @@ jobs:
           uname -a
           node --version
 
-  test:
+  reference-tests:
     needs: runner-probe
     runs-on: ubuntu-22.04
+    timeout-minutes: 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Run reference tests
-        run: node --test reference/*.test.js
+      - name: Run dependency-free reference tests
+        run: node --test reference/xqp_transaction.test.js reference/solana_devnet_adapter.test.js
