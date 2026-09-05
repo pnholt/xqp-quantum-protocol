@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xqp.example/schemas/transaction.schema.json",
+  "title": "XQP Transaction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_version",
+    "transaction_id",
+    "created_at",
+    "updated_at",
+    "state",
+    "intent",
+    "asset",
+    "amount",
+    "sender",
+    "recipient",
+    "network",
+    "policy",
+    "quote",
+    "authorisation",
+    "settlement",
+    "accounting",
+    "audit"
+  ],
+  "properties": {
+    "protocol_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+(\\.[0-9]+)?$"},
+    "transaction_id": {"type": "string", "minLength": 16, "maxLength": 128},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"},
+    "state": {
+      "enum": ["CREATED", "POLICY_PENDING", "QUOTED", "AUTHORISED", "SUBMITTED", "CONFIRMED", "ACCOUNTED", "AUDITED", "REJECTED", "EXPIRED", "FAILED", "CANCELLED"]
+    },
+    "intent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intent_id", "operation", "asset_id", "amount", "destination", "expires_at", "purpose_code"],
+      "properties": {
+        "intent_id": {"type": "string", "minLength": 16, "maxLength": 128},
+        "operation": {"enum": ["transfer", "merchant_payment", "donation", "treasury_disbursement", "test"]},
+        "asset_id": {"type": "string", "minLength": 3},
+        "amount": {"type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?$"},
+        "destination": {"type": "string", "minLength": 1},
+        "expires_at": {"type": "string", "format": "date-time"},
+        "purpose_code": {"type": "string", "minLength": 1, "maxLength": 64},
+        "supersedes": {"type": ["string", "null"]}
+      }
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["asset_id", "symbol"],
+      "properties": {
+        "asset_id": {"type": "string"},
+        "symbol": {"type": "string"}
+      }
+    },
+    "amount": {"type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?$"},
+    "sender": {"type": "string", "minLength": 1},
+    "recipient": {"type": "string", "minLength": 1},
+    "network": {"type": "string", "minLength": 1},
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "policy_version"],
+      "properties": {
+        "decision": {"enum": ["allow", "deny", "review", "pending"]},
+        "policy_version": {"type": "string"},
+        "jurisdiction": {"type": ["string", "null"]},
+        "evidence_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      }
+    },
+    "quote": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["quote_id", "source_asset", "destination_asset", "input_amount", "output_amount", "timestamp", "expires_at", "fee", "max_slippage_bps", "conversion_required"],
+          "properties": {
+            "quote_id": {"type": "string"},
+            "source_asset": {"type": "string"},
+            "destination_asset": {"type": "string"},
+            "input_amount": {"type": "string"},
+            "output_amount": {"type": "string"},
+            "price_sources": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+            "timestamp": {"type": "string", "format": "date-time"},
+            "expires_at": {"type": "string", "format": "date-time"},
+            "fee": {"type": "string"},
+            "max_slippage_bps": {"type": "integer", "minimum": 0, "maximum": 10000},
+            "reference_fiat": {"type": ["string", "null"]},
+            "conversion_required": {"type": "boolean"}
+          }
+        }
+      ]
+    },
+    "authorisation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "payload_digest"],
+      "properties": {
+        "status": {"enum": ["none", "pending", "authorised", "rejected"]},
+        "payload_digest": {"type": ["string", "null"]},
+        "authorised_at": {"type": ["string", "null"], "format": "date-time"},
+        "authoriser_ref": {"type": ["string", "null"]}
+      }
+    },
+    "settlement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {"enum": ["none", "pending", "submitted", "confirmed", "failed"]},
+        "signature": {"type": ["string", "null"]},
+        "submitted_at": {"type": ["string", "null"], "format": "date-time"},
+        "confirmed_at": {"type": ["string", "null"], "format": "date-time"},
+        "block_or_slot": {"type": ["string", "integer", "null"]},
+        "commitment": {"type": ["string", "null"]},
+        "network_fee": {"type": ["string", "null"]},
+        "idempotency_key": {"type": ["string", "null"]}
+      }
+    },
+    "accounting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "entries"],
+      "properties": {
+        "status": {"enum": ["none", "pending", "posted"]},
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["account", "side", "asset_id", "amount"],
+            "properties": {
+              "account": {"type": "string"},
+              "side": {"enum": ["debit", "credit"]},
+              "asset_id": {"type": "string"},
+              "amount": {"type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?$"}
+            }
+          }
+        }
+      }
+    },
+    "audit": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from", "to", "at", "actor", "reason"],
+        "properties": {
+          "from": {"type": ["string", "null"]},
+          "to": {"type": "string"},
+          "at": {"type": "string", "format": "date-time"},
+          "actor": {"type": "string"},
+          "reason": {"type": "string"},
+          "evidence_ref": {"type": ["string", "null"]},
+          "object_hash": {"type": ["string", "null"]}
+        }
+      }
+    }
+  }
+}
