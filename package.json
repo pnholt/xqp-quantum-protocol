@@ -5,6 +5,7 @@
   "description": "Reference and testnet tooling for X Quantum Protocol",
   "license": "UNLICENSED",
   "scripts": {
+    "guard:secrets": "node scripts/secret_guard.js",
     "test": "node --test reference/*.test.js",
     "verify:mint": "node scripts/verify_xqp_mint.js",
     "test:devnet": "node scripts/devnet_lifecycle.js"
