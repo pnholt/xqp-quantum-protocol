@@ -6,12 +6,14 @@ on:
       - 'reference/**'
       - 'schemas/**'
       - 'docs/XQP-0003-TRANSACTION-PROTOCOL.md'
+      - 'docs/XQP-0005-DEVNET-SETTLEMENT.md'
       - '.github/workflows/reference-tests.yml'
   pull_request:
     paths:
       - 'reference/**'
       - 'schemas/**'
       - 'docs/XQP-0003-TRANSACTION-PROTOCOL.md'
+      - 'docs/XQP-0005-DEVNET-SETTLEMENT.md'
       - '.github/workflows/reference-tests.yml'
 
 permissions:
@@ -26,4 +28,4 @@ jobs:
       - name: Show Node version
         run: node --version
       - name: Run reference tests
-        run: node --test reference/xqp_transaction.test.js
+        run: node --test reference/*.test.js
