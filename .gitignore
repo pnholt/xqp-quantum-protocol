@@ -1,0 +1,10 @@
+node_modules/
+artifacts/
+.env
+.env.*
+*.pem
+*.key
+*.keypair
+id.json
+solana-keypair*.json
+.DS_Store
