@@ -1,10 +1,12 @@
 name: XQP Reference Tests
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'reference/**'
       - 'schemas/**'
+      - 'scripts/**'
       - 'docs/XQP-0003-TRANSACTION-PROTOCOL.md'
       - 'docs/XQP-0005-DEVNET-SETTLEMENT.md'
       - '.github/workflows/reference-tests.yml'
@@ -12,6 +14,7 @@ on:
     paths:
       - 'reference/**'
       - 'schemas/**'
+      - 'scripts/**'
       - 'docs/XQP-0003-TRANSACTION-PROTOCOL.md'
       - 'docs/XQP-0005-DEVNET-SETTLEMENT.md'
       - '.github/workflows/reference-tests.yml'
@@ -20,12 +23,20 @@ permissions:
   contents: read
 
 jobs:
+  runner-probe:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Runner identity
+        run: |
+          echo "runner=$RUNNER_NAME"
+          uname -a
+          node --version
+
   test:
-    runs-on: ubuntu-latest
+    needs: runner-probe
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Show Node version
-        run: node --version
       - name: Run reference tests
         run: node --test reference/*.test.js
