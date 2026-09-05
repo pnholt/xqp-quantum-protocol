@@ -7,6 +7,7 @@ on:
       - 'reference/**'
       - 'schemas/**'
       - 'scripts/**'
+      - 'assets/**'
       - 'package.json'
       - '.github/workflows/xqp-ci.yml'
   pull_request:
@@ -14,6 +15,7 @@ on:
       - 'reference/**'
       - 'schemas/**'
       - 'scripts/**'
+      - 'assets/**'
       - 'package.json'
       - '.github/workflows/xqp-ci.yml'
 
@@ -21,16 +23,42 @@ permissions:
   contents: read
 
 jobs:
-  reference-tests:
+  verify:
     runs-on: windows-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - name: Runner probe
         shell: pwsh
         run: |
           Write-Output "runner=$env:RUNNER_NAME"
           node --version
+
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Run dependency-free reference tests
-        run: node --test reference/xqp_transaction.test.js reference/solana_devnet_adapter.test.js
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install pinned dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund
+
+      - name: Run protocol and transport tests
+        run: npm test
+
+      - name: Verify canonical XQP mint from finalized mainnet state
+        run: npm run verify:mint
+
+      - name: Execute full Solana devnet XQP lifecycle
+        run: npm run test:devnet
+
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xqp-verification-evidence
+          path: artifacts/*.json
+          if-no-files-found: warn
+          retention-days: 30
