@@ -28,14 +28,31 @@ const {
 const RPC = process.env.SOLANA_DEVNET_RPC_URL || clusterApiUrl('devnet');
 const OUTPUT = process.env.XQP_DEVNET_OUTPUT || 'artifacts/devnet-lifecycle.json';
 const TRANSFER_SOL = process.env.XQP_DEVNET_TRANSFER_SOL || '0.001';
-const AIRDROP_SOL = Number(process.env.XQP_DEVNET_AIRDROP_SOL || '0.05');
+const AIRDROP_SOL = Number(process.env.XQP_DEVNET_AIRDROP_SOL || '0.02');
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 async function requestEphemeralFunding(connection, publicKey) {
   const lamports = Math.round(AIRDROP_SOL * LAMPORTS_PER_SOL);
-  const signature = await connection.requestAirdrop(publicKey, lamports);
   const provider = createDevnetConfirmationProvider({ connection });
-  await waitForDevnetConfirmation(provider, signature, { attempts: 45, intervalMs: 1000 });
-  return signature;
+  let lastError;
+
+  for (let attempt = 1; attempt <= 4; attempt += 1) {
+    try {
+      const signature = await connection.requestAirdrop(publicKey, lamports);
+      await waitForDevnetConfirmation(provider, signature, { attempts: 60, intervalMs: 1000 });
+      const balance = await connection.getBalance(publicKey, 'confirmed');
+      if (balance > 0) return { signature, balance, attempt };
+      lastError = new Error('DEVNET_AIRDROP_BALANCE_NOT_OBSERVED');
+    } catch (error) {
+      lastError = error;
+    }
+    await sleep(attempt * 4000);
+  }
+
+  throw lastError || new Error('DEVNET_AIRDROP_FAILED');
 }
 
 async function main() {
@@ -47,9 +64,7 @@ async function main() {
   const payerPublic = payer.publicKey.toBase58();
   const recipientPublic = recipient.toBase58();
 
-  const fundingSignature = await requestEphemeralFunding(connection, payer.publicKey);
-  const fundedBalance = await connection.getBalance(payer.publicKey, 'confirmed');
-  if (fundedBalance <= 0) throw new Error('DEVNET_AIRDROP_BALANCE_NOT_OBSERVED');
+  const funding = await requestEphemeralFunding(connection, payer.publicKey);
 
   const now = new Date();
   let tx = createTransaction({
@@ -90,7 +105,7 @@ async function main() {
 
   const confirmationProvider = createDevnetConfirmationProvider({ connection });
   await waitForDevnetConfirmation(confirmationProvider, tx.settlement.signature, {
-    attempts: 45,
+    attempts: 60,
     intervalMs: 1000
   });
   tx = await confirmViaDevnetProvider(tx, {
@@ -150,7 +165,8 @@ async function main() {
     amount_sol: TRANSFER_SOL,
     ephemeral_payer_public_key: payerPublic,
     recipient_public_key: recipientPublic,
-    funding_signature: fundingSignature,
+    funding_signature: funding.signature,
+    funding_attempt: funding.attempt,
     settlement_signature: tx.settlement.signature,
     commitment: tx.settlement.commitment,
     slot: tx.settlement.block_or_slot,
