@@ -1,21 +1,46 @@
-# XQP Daily / Weekly Runbook (for Paul + AI helper)
+# XQP Protocol Operations Runbook
 
-## Daily (5–10 mins)
-1. **Check Phantom** – XQP shows, SOL > 0.01 for fees.
-2. **Post once on X** – use a line from `docs/social_snippets.md`. Always include the mint + site.
-3. **Push buy link** – `https://pnholt.github.io/xqp-quantum-protocol/buy.html`
-4. **Log OTC / LP** – if someone sent SOL, write it into the CSV (OTC or LP).
-5. **Ping 1 church / 1 builder** – send the church email or a shorter version.
+**Status:** Genesis operations
+**Updated:** 5 September 2026
 
-## Weekly
-1. **Publish treasury note** (even if 0): “This week we received X SOL, we added Y to liquidity, 1% pledge unchanged.”
-2. **Check PRs** on GitHub and merge the ones that add docs/pages.
-3. **Swap test** – do a tiny buy/sell so DEXes see activity.
-4. **Update social_snippets.md** with the best‑performing line.
+This runbook replaces the earlier growth-oriented routine. The objective is not to manufacture visible activity or repeatedly promote token acquisition. The objective is to build an auditable protocol, keep records accurate and surface risks early.
 
-## Monthly
-1. **Review pledge** – confirm 1% is still the target and name any church/charity candidates.
-2. **Export CSVs** (OTC + LP) and upload to repo.
-3. **Share explorer links** to prove the mint is unchanged.
+## Daily engineering check
 
-This runbook is meant to make the project look alive even on low funds.
+1. Review repository changes and open technical/security issues.
+2. Check that no secrets, seed phrases, private keys or personal identity documents have entered the repository.
+3. Review canonical asset and treasury registries for stale or unverified claims.
+4. Record any genuine protocol/testnet transaction through the XQP transaction lifecycle.
+5. Treat unexpected balance changes, unknown signatures or accounting differences as incidents requiring investigation.
+
+## Weekly protocol check
+
+1. Run the reference test suite.
+2. Review XQP proposals and implementation status.
+3. Reconcile any registered treasury wallet balances against the internal ledger.
+4. Check dependencies, signing procedures and incident notes.
+5. Review public website/social material for factual accuracy and current UK financial-promotion compliance before publishing acquisition-oriented material.
+6. Publish transparency information only when supported by verifiable records.
+
+## Monthly governance check
+
+1. Complete and retain a treasury reconciliation, even if activity is zero.
+2. Review signer continuity, backup and compromise procedures once multisig is active.
+3. Review the community-pledge accounting basis and payments, if any.
+4. Archive protocol metrics: genuine active wallets, genuine settlement activity, integrations, costs, incidents, governance participation and community funding.
+5. Review the UK regulatory perimeter and deployment gates for any newly proposed feature.
+
+## Prohibited operational practices
+
+- No self-trading, circular transfers or token swaps performed merely to create apparent volume or activity.
+- No invented users, fabricated partnerships, fake liquidity claims or unverifiable reserve claims.
+- No routine instruction to push token-buy links to UK consumers without the relevant financial-promotion route/compliance review.
+- No mixing of founder personal assets, protocol treasury assets and customer/custodial assets.
+- No publication of private keys, seed phrases or privileged credentials.
+- No claim that XQP is stable, £1-backed, legal tender, a bank deposit or guaranteed investment unless that later becomes legally and factually true.
+
+## Current build priority
+
+`M0 specification -> M1 testnet reference implementation -> M2 treasury hardening -> M3 controlled pilot -> M4 production decision gate`
+
+The protocol should look active only when it is genuinely active. Engineering evidence, reconciled records and reproducible tests are the proof.
