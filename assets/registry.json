@@ -1,5 +1,5 @@
 {
-  "registry_version": "0.1.0",
+  "registry_version": "0.1.1",
   "updated": "2026-09-05",
   "assets": [
     {
@@ -8,6 +8,7 @@
       "symbol": "XQP",
       "network": "solana-mainnet",
       "contract_or_mint": "5qrGE6aj5yYnhP7tJwNSP8Uz48juymCTMQT7w7w1KtH6",
+      "decimals": null,
       "issuer": "genesis-token",
       "asset_class": "network-cryptoasset",
       "supply_model": "fixed-supply-recorded-10000000000-pending-independent-reverification",
@@ -16,7 +17,8 @@
       "status": "production",
       "risk_level": "high-volatility",
       "verification_source": "solana-on-chain-reverification-required",
-      "last_verified_at": null
+      "last_verified_at": null,
+      "verification_notes": "Mint address is project-canonical. Supply, decimals, mint authority and freeze authority require independent on-chain reverification before reliance."
     },
     {
       "asset_id": "xqp-research:xqp-sv",
@@ -24,6 +26,7 @@
       "symbol": "XQP-SV",
       "network": null,
       "contract_or_mint": null,
+      "decimals": null,
       "issuer": null,
       "asset_class": "stable-value-research-concept",
       "supply_model": "not-issued",
@@ -32,7 +35,8 @@
       "status": "research",
       "risk_level": "not-assessed",
       "verification_source": "XQP-0002",
-      "last_verified_at": "2026-09-05"
+      "last_verified_at": "2026-09-05",
+      "verification_notes": "Research identifier only; no token, peg, reserve or redemption claim exists."
     }
   ]
 }
