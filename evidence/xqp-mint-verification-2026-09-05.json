@@ -1,0 +1,26 @@
+{
+  "verified_at": "2026-09-05T09:38:48.629Z",
+  "rpc_endpoint": "https://api.mainnet-beta.solana.com",
+  "commitment": "finalized",
+  "mint": "5qrGE6aj5yYnhP7tJwNSP8Uz48juymCTMQT7w7w1KtH6",
+  "parsed_program": "spl-token",
+  "owner_program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  "executable": false,
+  "lamports": 1461600,
+  "decimals": 9,
+  "initialized": true,
+  "mint_authority": null,
+  "freeze_authority": null,
+  "raw_supply": "10000000000000000000",
+  "expected_raw_supply": "10000000000000000000",
+  "ui_supply": "10000000000",
+  "supply_decimals": 9,
+  "assertions": {
+    "mint_authority_revoked": true,
+    "freeze_authority_revoked": true,
+    "exact_raw_supply_10b": true,
+    "decimals_match_supply": true,
+    "initialized": true
+  },
+  "verified": true
+}
