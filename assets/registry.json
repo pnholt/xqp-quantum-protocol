@@ -1,5 +1,5 @@
 {
-  "registry_version": "0.1.1",
+  "registry_version": "0.1.2",
   "updated": "2026-09-05",
   "assets": [
     {
@@ -19,6 +19,24 @@
       "verification_source": "solana-on-chain-reverification-required",
       "last_verified_at": null,
       "verification_notes": "Mint address is project-canonical. Supply, decimals, mint authority and freeze authority require independent on-chain reverification before reliance."
+    },
+    {
+      "asset_id": "solana-devnet:native-sol",
+      "name": "Solana Devnet SOL",
+      "symbol": "SOL-DEV",
+      "network": "solana-devnet",
+      "contract_or_mint": null,
+      "decimals": 9,
+      "issuer": "solana-devnet",
+      "asset_class": "testnet-native-asset",
+      "supply_model": "network-defined-testnet",
+      "redemption_model": "none",
+      "reference_asset": null,
+      "status": "testnet",
+      "risk_level": "valueless-test-asset",
+      "verification_source": "XQP-0005",
+      "last_verified_at": "2026-09-05",
+      "verification_notes": "Development-only native SOL on Solana devnet. No monetary value, peg or redemption claim."
     },
     {
       "asset_id": "xqp-research:xqp-sv",
