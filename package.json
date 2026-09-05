@@ -1,0 +1,15 @@
+{
+  "name": "xqp-quantum-protocol-reference",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reference and testnet tooling for X Quantum Protocol",
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "node --test reference/*.test.js",
+    "verify:mint": "node scripts/verify_xqp_mint.js",
+    "test:devnet": "node scripts/devnet_lifecycle.js"
+  },
+  "dependencies": {
+    "@solana/web3.js": "1.98.4"
+  }
+}
