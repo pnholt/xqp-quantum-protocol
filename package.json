@@ -8,6 +8,7 @@
     "guard:secrets": "node scripts/secret_guard.js",
     "test": "node --test reference/*.test.js",
     "verify:mint": "node scripts/verify_xqp_mint.js",
+    "report:treasury": "node scripts/treasury_lens.js",
     "test:devnet": "node scripts/devnet_lifecycle.js"
   },
   "dependencies": {
